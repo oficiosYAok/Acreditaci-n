@@ -6,14 +6,14 @@
     <title>Registro de Datos</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-
+ 
         body, html {
             height: 100%; width: 100%;
             font-family: 'Segoe UI', system-ui, sans-serif;
             overflow-y: auto;
             background-color: #001f4d;
         }
-
+ 
         .pantalla {
             display: none;
             min-height: 100vh;
@@ -21,7 +21,7 @@
             background: linear-gradient(135deg, #001f4d 0%, #003399 100%);
             padding: 10px 0;
         }
-
+ 
         .activa {
             display: flex;
             flex-direction: column;
@@ -29,21 +29,21 @@
             justify-content: flex-start;
             padding-top: 8vh;
         }
-
+ 
         .logo-contenedor {
             width: 90%;
             max-width: 420px;
             text-align: center;
             margin-bottom: 20px;
         }
-
+ 
         .titulo-app {
             color: white;
             font-size: 1.6rem;
             font-weight: 700;
             text-shadow: 0 2px 6px rgba(0,0,0,0.3);
         }
-
+ 
         .contenedor-v2 {
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.45));
             border: 1px solid rgba(255, 255, 255, 0.4);
@@ -57,7 +57,7 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4),
                         inset 0 2px 4px rgba(255, 255, 255, 0.3);
         }
-
+ 
         h2 {
             color: #002266;
             margin-bottom: 12px;
@@ -65,8 +65,8 @@
             font-size: 1.4rem;
             text-shadow: 0 1px 1px rgba(255,255,255,0.5);
         }
-
-        input {
+ 
+        input, select {
             width: 100%;
             padding: 12px;
             margin: 8px 0;
@@ -77,9 +77,9 @@
             outline: none;
             transition: all 0.3s ease;
         }
-
-        input:focus { border-color: #003399; box-shadow: 0 0 10px rgba(0,51,153,0.2); }
-
+ 
+        input:focus, select:focus { border-color: #003399; box-shadow: 0 0 10px rgba(0,51,153,0.2); }
+ 
         .btn-interactivo {
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.3));
             backdrop-filter: blur(12px);
@@ -99,7 +99,7 @@
                         inset 0 4px 4px 0 rgba(255, 255, 255, 0.5);
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
-
+ 
         .btn-interactivo::before {
             content: '';
             position: absolute;
@@ -108,9 +108,9 @@
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
             transition: all 0.6s ease;
         }
-
+ 
         .btn-interactivo:hover::before { left: 100%; }
-
+ 
         .btn-interactivo:hover {
             transform: translateY(-2px);
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.5));
@@ -118,24 +118,24 @@
                         inset 0 6px 6px 0 rgba(255, 255, 255, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.8);
         }
-
+ 
         .btn-interactivo:active {
             transform: translateY(1px);
             box-shadow: 0 4px 12px 0 rgba(0, 31, 77, 0.3);
         }
-
+ 
         .btn-interactivo:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
         }
-
+ 
         .check-animado {
             width: 70px; height: 70px; background: #28a745;
             color: white; font-size: 40px; line-height: 70px;
             border-radius: 50%; margin: 0 auto 15px;
         }
-
+ 
         .error-msg {
             color: #b00020;
             font-size: 13px;
@@ -144,7 +144,7 @@
             margin-bottom: 4px;
             min-height: 16px;
         }
-
+ 
         @media (max-height: 700px) {
             .activa { padding-top: 3vh; }
             .contenedor-v2 { padding: 15px 25px; }
@@ -155,49 +155,52 @@
     </style>
 </head>
 <body>
-
+ 
     <div id="pantalla-registro" class="pantalla activa">
         <div class="logo-contenedor">
             <div class="titulo-app">Registro de Datos</div>
         </div>
         <div class="contenedor-v2" id="cuerpo-form">
             <h2>Completá tus datos</h2>
-
+ 
             <input type="text" id="nombre" placeholder="Apellido y Nombre" autocomplete="name">
             <div class="error-msg" id="err-nombre"></div>
-
+ 
             <input type="number" id="dni" placeholder="DNI (sin puntos)" inputmode="numeric">
             <div class="error-msg" id="err-dni"></div>
-
+ 
             <input type="tel" id="cel" placeholder="Número de Celular" inputmode="tel">
             <div class="error-msg" id="err-cel"></div>
-
-            <input type="text" id="escuela" placeholder="Escuela / Colegio">
+ 
+            <select id="escuela">
+                <option value="">-- Seleccioná tu Escuela / Colegio --</option>
+                <option value="Colegio Nicolás Avellaneda">Colegio Nicolás Avellaneda</option>
+            </select>
             <div class="error-msg" id="err-escuela"></div>
-
+ 
             <button class="btn-interactivo" id="btn-enviar" onclick="enviarRegistro()">Enviar</button>
         </div>
     </div>
-
+ 
     <script>
         // PEGÁ ACÁ LA URL DE TU APPS SCRIPT (Implementar > Administrar implementaciones)
         const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxUEKpi-mI00oCSffeFM6OCXlkScHY6ol4xdBF61DpvxB7hpDlnzeaY2lAMKBwDQY-Rpw/exec";
-
+ 
         function limpiarErrores() {
             ['nombre', 'dni', 'cel', 'escuela'].forEach(id => {
                 document.getElementById('err-' + id).textContent = '';
             });
         }
-
+ 
         function validarFormulario() {
             limpiarErrores();
             let valido = true;
-
+ 
             const nombre = document.getElementById('nombre').value.trim();
             const dni = document.getElementById('dni').value.trim();
             const cel = document.getElementById('cel').value.trim();
             const escuela = document.getElementById('escuela').value.trim();
-
+ 
             if (!nombre) {
                 document.getElementById('err-nombre').textContent = 'Ingresá tu nombre completo.';
                 valido = false;
@@ -214,32 +217,32 @@
                 document.getElementById('err-escuela').textContent = 'Ingresá tu escuela o colegio.';
                 valido = false;
             }
-
+ 
             return valido ? { nombre, dni, cel, escuela } : null;
         }
-
+ 
         async function enviarRegistro() {
             const datos = validarFormulario();
             if (!datos) return;
-
+ 
             const btn = document.getElementById('btn-enviar');
             btn.disabled = true;
             btn.textContent = 'Enviando...';
-
+ 
             try {
                 await fetch(URL_SCRIPT, {
                     method: 'POST',
                     mode: 'no-cors',
                     body: JSON.stringify(datos)
                 });
-
+ 
                 const contenedor = document.getElementById('cuerpo-form');
                 contenedor.innerHTML = `
                     <div class="check-animado">✓</div>
                     <h2 style="color: #28a745; margin-bottom: 10px;">¡Muchas Gracias!</h2>
                     <p style="color: #112244; font-weight: 600;">Tu registro fue guardado con éxito.</p>
                 `;
-
+ 
                 setTimeout(() => { location.reload(); }, 3000);
             } catch (e) {
                 btn.disabled = false;
@@ -250,3 +253,4 @@
     </script>
 </body>
 </html>
+ 
