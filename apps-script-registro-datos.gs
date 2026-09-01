@@ -1,6 +1,6 @@
 function doPost(e) {
   // REEMPLAZÁ CON EL ID DE TU HOJA DE CÁLCULO
-  var idHoja = "PEGAR_ID_DE_TU_GOOGLE_SHEET_ACA";
+  var idHoja = "1Dv-NTX7iPdpD8oMi7jgSEaqULnZXJbx_4QxSNE8HwVw";
   var ss = SpreadsheetApp.openById(idHoja);
 
   try {
