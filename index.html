@@ -175,7 +175,7 @@
             <input type="tel" id="cel" placeholder="Número de Celular" inputmode="tel" required>
             <div class="error-msg" id="err-cel"></div>
  
-            <select id="escuela">
+            <select id="escuela" required>
                       <option value="">-- Seleccioná tu Escuela / Colegio --</option>
                 <option value="COLEGIO JESÚS MISERICORDIOSO">COLEGIO JESÚS MISERICORDIOSO</option>
                 <option value="COLEGIO NICOLAS AVELLANEDA">COLEGIO NICOLAS AVELLANEDA</option>
@@ -287,12 +287,63 @@
             return valido ? { nombre, dni, cel, escuela } : null;
         }
  
+        // Consulta al Apps Script (vía JSONP, para poder leer la respuesta sin problemas de CORS)
+        // si el DNI ya fue registrado en la hoja del mes actual.
+        function verificarDniExistente(dni) {
+            return new Promise((resolve) => {
+                const nombreCallback = 'cbVerificar_' + Date.now();
+                let resuelto = false;
+ 
+                const limpiar = () => {
+                    delete window[nombreCallback];
+                    if (script.parentNode) script.parentNode.removeChild(script);
+                };
+ 
+                window[nombreCallback] = function (respuesta) {
+                    if (resuelto) return;
+                    resuelto = true;
+                    limpiar();
+                    resolve(!!(respuesta && respuesta.existe));
+                };
+ 
+                const script = document.createElement('script');
+                script.src = URL_SCRIPT + '?accion=verificarDni&dni=' + encodeURIComponent(dni) + '&callback=' + nombreCallback;
+                script.onerror = function () {
+                    if (resuelto) return;
+                    resuelto = true;
+                    limpiar();
+                    // Si falla la verificación por conexión, dejamos continuar
+                    // (el servidor igual va a bloquear el duplicado al guardar).
+                    resolve(false);
+                };
+                document.body.appendChild(script);
+ 
+                // Salvavidas por si el callback nunca llega
+                setTimeout(() => {
+                    if (resuelto) return;
+                    resuelto = true;
+                    limpiar();
+                    resolve(false);
+                }, 6000);
+            });
+        }
+ 
         async function enviarRegistro() {
             const datos = validarFormulario();
             if (!datos) return;
  
             const btn = document.getElementById('btn-enviar');
             btn.disabled = true;
+            btn.textContent = 'Verificando DNI...';
+ 
+            const yaExiste = await verificarDniExistente(datos.dni);
+            if (yaExiste) {
+                document.getElementById('err-dni').textContent = 'Este DNI ya fue registrado.';
+                btn.disabled = false;
+                btn.textContent = 'Enviar';
+                return;
+            }
+ 
             btn.textContent = 'Enviando...';
  
             try {
